@@ -5,7 +5,9 @@ import { BarraFiltros } from "./BarraFiltros";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
-beforeEach(() => push.mockClear());
+beforeEach(() => {
+  push.mockClear();
+});
 
 const streamings = [
   { id: 8, nome: "Netflix", logoUrl: null },
