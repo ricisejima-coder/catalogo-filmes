@@ -70,3 +70,15 @@ it("listarFilmes sem busca usa os ids de todos os streamings", async () => {
   const discover = f.mock.calls.map((c) => new URL(String(c[0]))).find((u) => u.pathname.endsWith("/discover/movie"))!;
   expect(discover.searchParams.get("with_watch_providers")).toBe("8");
 });
+
+it("listarFilmes com busca usa /search/movie e não /discover/movie", async () => {
+  const f = instalarFetchFalso({
+    "/watch/providers/movie": { results: [] },
+    "/search/movie": { page: 1, total_pages: 1, results: [] },
+    "/discover/movie": pag,
+  });
+  await listarFilmes({ ...FILTROS_PADRAO, busca: "batman" }, 1);
+  const caminhos = f.mock.calls.map((c) => new URL(String(c[0])).pathname);
+  expect(caminhos).toContain("/3/search/movie");
+  expect(caminhos).not.toContain("/3/discover/movie");
+});

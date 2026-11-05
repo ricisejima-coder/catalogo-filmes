@@ -1,6 +1,7 @@
 import type { Filtros, Ordem } from "@/lib/filtros";
 import { CACHE, PAGINA_MAXIMA, tmdbGet } from "./cliente";
 import { paraFilmeResumo } from "./imagens";
+import { buscarFilmes } from "./busca";
 import { listarStreamings } from "./referencias";
 import type { PaginaFilmes, TmdbPagina } from "./tipos";
 
@@ -47,7 +48,7 @@ export async function descobrirFilmes(
 }
 
 export async function listarFilmes(filtros: Filtros, pagina: number): Promise<PaginaFilmes> {
-  // Busca por título chega na Task 6.
+  if (filtros.busca) return buscarFilmes({ ...filtros, busca: filtros.busca }, pagina);
   const streamings = await listarStreamings();
   return descobrirFilmes(filtros, pagina, streamings.map((s) => s.id));
 }
