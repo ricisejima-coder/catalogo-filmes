@@ -34,7 +34,7 @@ it("escolher gênero e ordem", async () => {
   await userEvent.selectOptions(screen.getByLabelText("Gênero"), "28");
   expect(push).toHaveBeenLastCalledWith("/?genero=28");
   await userEvent.selectOptions(screen.getByLabelText("Ordenar por"), "avaliados");
-  expect(push).toHaveBeenLastCalledWith("/?ordem=avaliados");
+  expect(push).toHaveBeenLastCalledWith("/?genero=28&ordem=avaliados"); // a escolha anterior não se perde
 });
 
 it("voltar o gênero para Todos remove da URL", async () => {
@@ -53,4 +53,30 @@ it("com busca ativa a ordem fica desabilitada", () => {
   render(<BarraFiltros streamings={streamings} generos={generos} filtros={{ ...FILTROS_PADRAO, busca: "x" }} />);
   expect(screen.getByLabelText("Ordenar por")).toBeDisabled();
   expect(screen.getByText("Ordenado por relevância")).toBeInTheDocument();
+});
+
+it("a caixa de busca acompanha a URL quando os filtros mudam por fora", () => {
+  const { rerender } = render(
+    <BarraFiltros streamings={streamings} generos={generos} filtros={{ ...FILTROS_PADRAO, busca: "batman" }} />,
+  );
+  expect(screen.getByLabelText("Buscar filme")).toHaveValue("batman");
+  rerender(<BarraFiltros streamings={streamings} generos={generos} filtros={FILTROS_PADRAO} />);
+  expect(screen.getByLabelText("Buscar filme")).toHaveValue("");
+});
+
+it("mostra que está carregando até a página chegar com os novos filtros", async () => {
+  const { rerender } = render(<BarraFiltros streamings={streamings} generos={generos} filtros={FILTROS_PADRAO} />);
+  expect(screen.getByRole("region", { name: "Filtros" })).toHaveAttribute("aria-busy", "false");
+  await userEvent.click(screen.getByRole("button", { name: "Netflix" }));
+  expect(screen.getByRole("region", { name: "Filtros" })).toHaveAttribute("aria-busy", "true");
+  expect(screen.getByText("Carregando…")).toBeInTheDocument();
+  rerender(<BarraFiltros streamings={streamings} generos={generos} filtros={{ streamings: [8], ordem: "populares" }} />);
+  expect(screen.getByRole("region", { name: "Filtros" })).toHaveAttribute("aria-busy", "false");
+});
+
+it("dois cliques rápidos mantêm os dois streamings", async () => {
+  render(<BarraFiltros streamings={streamings} generos={generos} filtros={FILTROS_PADRAO} />);
+  await userEvent.click(screen.getByRole("button", { name: "Netflix" }));
+  await userEvent.click(screen.getByRole("button", { name: "Prime Video" }));
+  expect(push).toHaveBeenLastCalledWith("/?streaming=8%2C119");
 });
