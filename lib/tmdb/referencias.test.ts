@@ -1,23 +1,30 @@
 import { instalarFetchFalso } from "@/tests/fetchFalso";
-import { listarGeneros, listarStreamings } from "./referencias";
+import { listarGeneros, listarStreamings, STREAMINGS_PRINCIPAIS } from "./referencias";
 
 beforeEach(() => vi.stubEnv("TMDB_READ_TOKEN", "tok"));
 
-it("lista os 12 streamings de maior prioridade no BR", async () => {
-  const provs = Array.from({ length: 15 }, (_, i) => ({
-    provider_id: i + 1,
-    provider_name: `P${i + 1}`,
-    logo_path: "/l.png",
-    display_priority: 15 - i,
-  }));
-  const f = instalarFetchFalso({ "/watch/providers/movie": { results: provs } });
-  const r = await listarStreamings();
-  expect(r).toHaveLength(12);
-  expect(r[0]).toEqual({ id: 15, nome: "P15", logoUrl: "https://image.tmdb.org/t/p/w92/l.png" });
-  expect(r[11].id).toBe(4);
+it("lista só os streamings escolhidos, na ordem da lista fixa", async () => {
+  const f = instalarFetchFalso({
+    "/watch/providers/movie": {
+      results: [
+        { provider_id: 2791, provider_name: "JustWatch TV Beta", logo_path: "/j.png", display_priority: 1 },
+        { provider_id: 1899, provider_name: "HBO Max", logo_path: "/h.png", display_priority: 50 },
+        { provider_id: 2, provider_name: "Apple TV Store", logo_path: "/s.png", display_priority: 2 },
+        { provider_id: 8, provider_name: "Netflix", logo_path: "/n.png", display_priority: 0 },
+      ],
+    },
+  });
+  expect(await listarStreamings()).toEqual([
+    { id: 8, nome: "Netflix", logoUrl: "https://image.tmdb.org/t/p/w92/n.png" },
+    { id: 1899, nome: "HBO Max", logoUrl: "https://image.tmdb.org/t/p/w92/h.png" },
+  ]);
   const url = new URL(String(f.mock.calls[0][0]));
   expect(url.searchParams.get("watch_region")).toBe("BR");
   expect(url.searchParams.get("language")).toBe("pt-BR");
+});
+
+it("a lista fixa tem os 11 streamings principais do Brasil", () => {
+  expect(STREAMINGS_PRINCIPAIS).toEqual([8, 119, 337, 1899, 307, 350, 531, 283, 11, 47, 167]);
 });
 
 it("lista gêneros em pt-BR", async () => {

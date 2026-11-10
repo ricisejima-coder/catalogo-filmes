@@ -88,7 +88,8 @@ type Filtros = {
 ## 5. Funcionalidades e uso da API
 
 ### 5.1 Lista de streamings e gêneros
-- `GET /watch/providers/movie?watch_region=BR&language=pt-BR`: o app mostra os **12 primeiros** por `display_priority`, com o logo de cada um.
+- `GET /watch/providers/movie?watch_region=BR&language=pt-BR`: o app mostra uma **lista fixa** de streamings por assinatura, nesta ordem: Netflix (8), Prime Video (119), Disney+ (337), HBO Max (1899), Globoplay (307), Apple TV (350), Paramount+ (531), Crunchyroll (283), MUBI (11), Looke (47), Claro video (167). Nome e logo vêm da resposta do TMDB; um id que o TMDB deixar de listar some do filtro.
+  - *Revisão de 2026-11-10:* a regra original ("12 primeiros por `display_priority`") foi trocada depois do teste com dados reais, porque a prioridade do TMDB inclui lojas de aluguel/compra e serviços de teste e deixava de fora HBO Max e Globoplay.
 - `GET /genre/movie/list?language=pt-BR`
 
 ### 5.2 Catálogo em grade (sem busca)
