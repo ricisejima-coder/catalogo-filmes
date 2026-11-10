@@ -7,7 +7,7 @@ import { OndeAssistir } from "@/components/OndeAssistir";
 import { Trailer } from "@/components/Trailer";
 import { lerIdFilme } from "@/lib/idFilme";
 import { listarMarcacoesComSeguranca, paraMapa } from "@/lib/marcacoes/consultas";
-import { obterUsuario } from "@/lib/supabase/servidor";
+import { obterUsuarioComSeguranca } from "@/lib/supabase/servidor";
 import { ErroNaoEncontrado } from "@/lib/tmdb/cliente";
 import { obterDetalhes } from "@/lib/tmdb/detalhes";
 
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps<"/filme/[id]">): Pr
 export default async function PaginaFilme({ params }: PageProps<"/filme/[id]">) {
   const [filme, usuario, marcacoes] = await Promise.all([
     carregar((await params).id),
-    obterUsuario(),
+    obterUsuarioComSeguranca(),
     listarMarcacoesComSeguranca(),
   ]);
   const info = [filme.ano, filme.duracao, filme.generos.join(", ")].filter(Boolean);
@@ -76,7 +76,7 @@ export default async function PaginaFilme({ params }: PageProps<"/filme/[id]">) 
               filmeId={filme.id}
               titulo={filme.titulo}
               marcacao={paraMapa(marcacoes ?? [])[filme.id] ?? null}
-              logado={usuario !== null}
+              logado={usuario !== null && usuario !== "indisponivel"}
             />
             {filme.sinopse && <p className="max-w-[60ch] leading-relaxed text-texto/90">{filme.sinopse}</p>}
             <OndeAssistir streamings={filme.ondeAssistir} />

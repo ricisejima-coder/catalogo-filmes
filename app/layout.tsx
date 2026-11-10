@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Big_Shoulders, Geist } from "next/font/google";
 import { Logotipo } from "@/components/Logotipo";
 import { MenuConta } from "@/components/MenuConta";
-import { obterUsuario } from "@/lib/supabase/servidor";
+import { obterUsuarioComSeguranca } from "@/lib/supabase/servidor";
 import { sair } from "./entrar/acoes";
 import { Rodape } from "./Rodape";
 import "./globals.css";
@@ -17,7 +17,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const usuario = await obterUsuario();
+  const sessao = await obterUsuarioComSeguranca();
+  // Se o Supabase estiver fora do ar, o cabeçalho mostra só "Entrar".
+  const usuario = sessao === "indisponivel" ? null : sessao;
   return (
     <html lang="pt-BR" className={`${geistSans.variable} ${bigShoulders.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-tela text-texto">

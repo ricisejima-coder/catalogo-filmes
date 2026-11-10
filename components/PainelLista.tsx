@@ -8,13 +8,16 @@ import type { Lista, Marcacao } from "@/lib/marcacoes/tipos";
 type Props = {
   aba: Lista;
   logado: boolean;
+  /** true = o Supabase não respondeu, então não dá para saber se a pessoa está logada. */
+  indisponivel?: boolean;
   /** null = o Supabase falhou ao carregar. */
   marcacoes: Marcacao[] | null;
 };
 
 const TITULO: Record<Lista, string> = { quero_ver: "Quero ver", ja_vi: "Já vi" };
 
-async function Conteudo({ aba, logado, marcacoes }: Props) {
+async function Conteudo({ aba, logado, indisponivel, marcacoes }: Props) {
+  if (indisponivel) return <p className="text-apagado">Não deu para carregar suas listas agora</p>;
   if (!logado) {
     const entrar: Aba = aba;
     return (
@@ -30,11 +33,11 @@ async function Conteudo({ aba, logado, marcacoes }: Props) {
   return <ListaMarcados filmes={await carregarFilmesMarcados(marcacoes, aba)} lista={aba} logado />;
 }
 
-export function PainelLista(props: Props) {
+export async function PainelLista(props: Props) {
   return (
     <>
       <h1 className="mb-6 font-letreiro text-4xl font-extrabold tracking-wide sm:text-5xl">{TITULO[props.aba]}</h1>
-      <Conteudo {...props} />
+      {await Conteudo(props)}
     </>
   );
 }

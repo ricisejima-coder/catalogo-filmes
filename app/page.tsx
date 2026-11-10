@@ -8,7 +8,7 @@ import { PainelLista } from "@/components/PainelLista";
 import { lerAba } from "@/lib/abas";
 import { escreverFiltros, lerFiltros } from "@/lib/filtros";
 import { listarMarcacoesComSeguranca, paraMapa } from "@/lib/marcacoes/consultas";
-import { obterUsuario } from "@/lib/supabase/servidor";
+import { obterUsuarioComSeguranca } from "@/lib/supabase/servidor";
 import { listarFilmes } from "@/lib/tmdb/catalogo";
 import { listarGeneros, listarStreamings } from "@/lib/tmdb/referencias";
 import type { FilmeResumo } from "@/lib/tmdb/tipos";
@@ -20,14 +20,15 @@ function temCena(filme: FilmeResumo): filme is FilmeResumo & { fundoUrl: string 
 export default async function Catalogo({ searchParams }: PageProps<"/">) {
   const params = await searchParams;
   const aba = lerAba(params);
-  const [usuario, lista] = await Promise.all([obterUsuario(), listarMarcacoesComSeguranca()]);
-  const logado = usuario !== null;
+  const [usuario, lista] = await Promise.all([obterUsuarioComSeguranca(), listarMarcacoesComSeguranca()]);
+  const indisponivel = usuario === "indisponivel";
+  const logado = usuario !== null && !indisponivel;
 
   if (aba !== "streaming") {
     return (
       <div className="moldura pt-4 pb-16">
         <AbasCatalogo ativa={aba} />
-        <PainelLista aba={aba} logado={logado} marcacoes={lista} />
+        <PainelLista aba={aba} logado={logado} indisponivel={indisponivel} marcacoes={lista} />
       </div>
     );
   }
