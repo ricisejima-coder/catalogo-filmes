@@ -45,13 +45,13 @@ export function BarraFiltros({ streamings, generos, filtros }: Props) {
     <section
       aria-label="Filtros"
       aria-busy={carregando}
-      className="mb-8 flex flex-col gap-5 rounded-2xl bg-zinc-900/60 p-4 ring-1 ring-white/5 sm:p-5"
+      className="mb-8 flex flex-col gap-5 border-y border-white/10 py-5"
     >
       <div className="flex items-center justify-between gap-4">
         <SeletorStreamings streamings={streamings} selecionados={atuais.streamings} aoAlternar={alternarStreaming} />
         {carregando && (
-          <span role="status" className="flex items-center gap-2 text-sm text-amber-300">
-            <span aria-hidden className="size-3 animate-spin rounded-full border-2 border-amber-300 border-t-transparent" />
+          <span role="status" className="flex items-center gap-2 text-sm text-luz">
+            <span aria-hidden className="size-3 animate-spin rounded-full border-2 border-luz border-t-transparent" />
             Carregando…
           </span>
         )}

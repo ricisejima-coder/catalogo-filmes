@@ -50,7 +50,7 @@ export function BotaoCarregarMais({ filtros, ultimaPagina: paginaInicial, temMai
             type="button"
             onClick={carregar}
             disabled={carregando}
-            className="rounded-full border border-zinc-700 px-6 py-2.5 text-sm font-medium text-zinc-200 transition hover:border-amber-400 hover:text-amber-300 disabled:opacity-50"
+            className="rounded-md border border-white/20 px-6 py-2.5 text-sm font-medium text-texto hover:border-luz hover:text-luz focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-luz disabled:opacity-50"
           >
             {carregando ? "Carregando…" : erro ? "Tentar de novo" : "Carregar mais"}
           </button>

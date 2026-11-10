@@ -26,41 +26,51 @@ export async function generateMetadata({ params }: PageProps<"/filme/[id]">): Pr
 
 export default async function PaginaFilme({ params }: PageProps<"/filme/[id]">) {
   const filme = await carregar((await params).id);
-  const info = [filme.ano, filme.duracao, filme.generos.join(", ")].filter(Boolean).join(" · ");
+  const info = [filme.ano, filme.duracao, filme.generos.join(", ")].filter(Boolean);
 
   return (
-    <article className="relative">
-      {filme.fundoUrl && (
-        <div aria-hidden className="absolute inset-x-0 -top-6 -z-10 h-[28rem] overflow-hidden">
-          <Image src={filme.fundoUrl} alt="" fill priority sizes="100vw" className="object-cover opacity-25" />
-          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/80 to-zinc-950" />
-        </div>
-      )}
-
-      <div className="flex flex-col gap-8 pt-4 md:flex-row">
-        <Image
-          src={filme.posterUrl ?? "/sem-poster.svg"}
-          alt={`Pôster de ${filme.titulo}`}
-          width={500}
-          height={750}
-          priority
-          className="mx-auto w-56 shrink-0 self-start rounded-xl shadow-2xl ring-1 ring-white/10 md:mx-0 md:w-72"
-        />
-        <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{filme.titulo}</h1>
-            {filme.tituloOriginal && <p className="mt-1 text-zinc-400">{filme.tituloOriginal}</p>}
+    <article>
+      <header className="relative -mt-20 overflow-hidden">
+        {filme.fundoUrl && (
+          <div aria-hidden className="absolute inset-0">
+            <Image src={filme.fundoUrl} alt="" fill priority sizes="100vw" className="acender object-cover object-[70%_20%]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-tela via-tela/80 to-tela/10" />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-tela to-tela/0" />
+            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-tela/80 to-tela/0" />
           </div>
-          {info && <p className="text-sm text-zinc-300">{info}</p>}
-          <p className="text-lg font-semibold text-amber-300">
-            ★ {filme.nota.toFixed(1)} <span className="text-sm font-normal text-zinc-500">/ 10</span>
-          </p>
-          {filme.sinopse && <p className="max-w-prose leading-relaxed text-zinc-200">{filme.sinopse}</p>}
-          <OndeAssistir streamings={filme.ondeAssistir} />
-        </div>
-      </div>
+        )}
 
-      <div className="mt-12 flex flex-col gap-12">
+        <div className="moldura relative flex flex-col gap-8 pt-28 pb-12 md:flex-row md:gap-12 md:pt-36">
+          <Image
+            src={filme.posterUrl ?? "/sem-poster.svg"}
+            alt={`Pôster de ${filme.titulo}`}
+            width={500}
+            height={750}
+            priority
+            className="w-44 shrink-0 self-start rounded-md shadow-2xl shadow-black md:w-64"
+          />
+          <div className="flex flex-col gap-4">
+            <div>
+              <h1 className="max-w-[16ch] font-letreiro text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.88] font-black text-balance uppercase">
+                {filme.titulo}
+              </h1>
+              {filme.tituloOriginal && <p className="mt-3 text-apagado">{filme.tituloOriginal}</p>}
+            </div>
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-apagado">
+              <span className="text-base font-semibold text-luz">
+                ★ {filme.nota.toFixed(1)} <span className="text-sm font-normal text-apagado">/ 10</span>
+              </span>
+              {info.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </p>
+            {filme.sinopse && <p className="max-w-[60ch] leading-relaxed text-texto/90">{filme.sinopse}</p>}
+            <OndeAssistir streamings={filme.ondeAssistir} />
+          </div>
+        </div>
+      </header>
+
+      <div className="moldura flex flex-col gap-12 pt-6 pb-16">
         <Trailer youtubeId={filme.trailerYoutubeId} />
         <Elenco pessoas={filme.elenco} />
       </div>

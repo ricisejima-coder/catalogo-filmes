@@ -3,28 +3,37 @@ import Link from "next/link";
 import type { FilmeResumo } from "@/lib/tmdb/tipos";
 
 export function CardFilme({ filme }: { filme: FilmeResumo }) {
+  // Cartão deitado, como uma tela de cinema. Sem cena disponível, mostra o pôster sobre fundo escuro.
+  const temCena = Boolean(filme.fundoUrl);
+
   return (
-    <Link
-      href={`/filme/${filme.id}`}
-      className="group block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-400"
-    >
-      <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-800 shadow-lg ring-1 ring-white/5 transition duration-300 group-hover:-translate-y-1 group-hover:shadow-amber-500/10 group-hover:ring-amber-400/40">
-        <Image
-          src={filme.posterUrl ?? "/sem-poster.svg"}
-          alt={`Pôster de ${filme.titulo}`}
-          width={342}
-          height={513}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        />
-        <span className="absolute top-2 right-2 rounded-md bg-black/75 px-1.5 py-0.5 text-xs font-semibold text-amber-300 backdrop-blur-sm">
+    <Link href={`/filme/${filme.id}`} className="group block rounded-md focus-visible:outline-none">
+      <div className="relative aspect-video overflow-hidden rounded-md bg-pelicula ring-2 ring-transparent group-hover:ring-luz group-focus-visible:ring-luz">
+        {temCena ? (
+          <Image
+            src={filme.fundoUrl!}
+            alt={`Cena de ${filme.titulo}`}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1536px) 25vw, 20vw"
+            className="object-cover"
+          />
+        ) : (
+          <Image
+            src={filme.posterUrl ?? "/sem-poster.svg"}
+            alt={`Pôster de ${filme.titulo}`}
+            fill
+            sizes="(max-width: 640px) 25vw, 12vw"
+            className="object-contain py-2"
+          />
+        )}
+      </div>
+      <h3 className="mt-2.5 line-clamp-1 text-sm font-medium text-texto group-hover:text-luz">{filme.titulo}</h3>
+      <p className="mt-0.5 flex gap-3 text-xs text-apagado">
+        <span className="text-luz">
           ★ <span>{filme.nota.toFixed(1)}</span>
         </span>
-      </div>
-      <h3 className="mt-2 line-clamp-2 text-sm font-medium leading-snug text-zinc-100 group-hover:text-amber-300">
-        {filme.titulo}
-      </h3>
-      {filme.ano && <p className="text-xs text-zinc-500">{filme.ano}</p>}
+        {filme.ano && <span>{filme.ano}</span>}
+      </p>
     </Link>
   );
 }

@@ -16,8 +16,8 @@ export function SeletorStreamings({ streamings, selecionados, aoAlternar }: Prop
             aria-pressed={ativo}
             title={s.nome}
             onClick={() => aoAlternar(s.id)}
-            className={`size-11 overflow-hidden rounded-xl ring-2 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 ${
-              ativo ? "scale-105 ring-amber-400" : "opacity-60 ring-transparent grayscale hover:opacity-100 hover:grayscale-0"
+            className={`size-11 overflow-hidden rounded-xl ring-2 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luz ${
+              ativo ? "ring-luz" : "opacity-60 ring-transparent grayscale hover:opacity-100 hover:grayscale-0"
             }`}
           >
             {s.logoUrl ? (

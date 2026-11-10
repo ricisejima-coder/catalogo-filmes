@@ -12,6 +12,12 @@ it("mostra título, ano, nota e link para o detalhe", () => {
   expect(screen.getByAltText("Pôster de Duna")).toBeInTheDocument();
 });
 
+it("com cena disponível mostra a cena no lugar do pôster", () => {
+  render(<CardFilme filme={{ ...filme, fundoUrl: "https://image.tmdb.org/t/p/w780/c.jpg" }} />);
+  expect(screen.getByAltText("Cena de Duna")).toBeInTheDocument();
+  expect(screen.queryByAltText("Pôster de Duna")).not.toBeInTheDocument();
+});
+
 it("sem pôster usa a imagem padrão", () => {
   render(<CardFilme filme={{ ...filme, posterUrl: null }} />);
   expect(screen.getByAltText("Pôster de Duna").getAttribute("src")).toContain("sem-poster.svg");

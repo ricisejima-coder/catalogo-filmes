@@ -10,14 +10,14 @@ const OPCOES: { valor: Ordem; rotulo: string }[] = [
 
 export function SeletorOrdem({ valor, desabilitado, aoMudar }: Props) {
   return (
-    <div className="flex flex-col gap-1 text-xs text-zinc-400">
+    <div className="flex flex-col gap-1 text-xs text-apagado">
       <label htmlFor="ordem">Ordenar por</label>
       <select
         id="ordem"
         value={valor}
         disabled={desabilitado}
         onChange={(e) => aoMudar(e.target.value as Ordem)}
-        className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 disabled:opacity-50"
+        className="rounded-md border border-white/15 bg-pelicula px-3 py-2 text-sm text-texto focus-visible:border-luz focus-visible:outline-none disabled:opacity-50"
       >
         {OPCOES.map((o) => (
           <option key={o.valor} value={o.valor}>

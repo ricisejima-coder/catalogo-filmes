@@ -1,9 +1,9 @@
 export function Trailer({ youtubeId }: { youtubeId: string | null }) {
   if (!youtubeId) return null;
   return (
-    <section aria-labelledby="trailer">
-      <h2 id="trailer" className="mb-3 text-lg font-semibold">Trailer</h2>
-      <div className="aspect-video overflow-hidden rounded-xl bg-black ring-1 ring-white/10">
+    <section aria-labelledby="trailer" className="mx-auto w-full max-w-5xl">
+      <h2 id="trailer" className="mb-4 font-letreiro text-3xl font-extrabold tracking-wide">Trailer</h2>
+      <div className="aspect-video overflow-hidden rounded-md bg-pelicula">
         <iframe
           title="Trailer"
           src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}

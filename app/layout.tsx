@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Geist } from "next/font/google";
+import { Big_Shoulders, Geist } from "next/font/google";
+import { Logotipo } from "@/components/Logotipo";
 import { Rodape } from "./Rodape";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+// Letra alta e estreita, de letreiro de cinema, para títulos.
+const bigShoulders = Big_Shoulders({ variable: "--font-big-shoulders", subsets: ["latin"], axes: ["opsz"] });
 
 export const metadata: Metadata = {
   title: "Catálogo de Streaming",
@@ -13,16 +15,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100">
-        <header className="border-b border-zinc-800 px-4 py-4">
-          <div className="mx-auto max-w-7xl">
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              Catálogo de Streaming
-            </Link>
+    <html lang="pt-BR" className={`${geistSans.variable} ${bigShoulders.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col bg-tela text-texto">
+        {/* Fica por cima do destaque, sem fundo próprio. */}
+        <header className="absolute inset-x-0 top-0 z-20">
+          <div className="moldura py-5">
+            <Logotipo />
           </div>
         </header>
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">{children}</main>
+        <main className="flex-1 pt-20">{children}</main>
         <Rodape />
       </body>
     </html>

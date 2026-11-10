@@ -9,6 +9,9 @@ export type FilmeResumo = {
   ano: string | null;
   nota: number;
   posterUrl: string | null;
+  /** Imagem deitada (cena do filme), usada nos cartões e no destaque. */
+  fundoUrl?: string | null;
+  sinopse?: string;
   generoIds: number[];
 };
 
@@ -41,6 +44,8 @@ export type TmdbFilme = {
   vote_average: number;
   vote_count?: number;
   poster_path: string | null;
+  backdrop_path?: string | null;
+  overview?: string;
   genre_ids: number[];
 };
 export type TmdbPagina = { page: number; total_pages: number; results: TmdbFilme[] };
