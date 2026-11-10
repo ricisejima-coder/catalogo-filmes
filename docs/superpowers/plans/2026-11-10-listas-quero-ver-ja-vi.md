@@ -271,7 +271,7 @@ git commit -m "feat: leitura da aba e validação do caminho de volta"
 **Files:**
 - Create: `app/entrar/acoes.ts`, `app/entrar/acoes.test.ts`
 - Create: `app/entrar/FormularioEntrada.tsx`, `app/entrar/FormularioEntrada.test.tsx`
-- Create: `app/entrar/page.tsx`
+- Create: `app/entrar/page.tsx`, `app/entrar/page.test.tsx`
 - Create: `components/MenuConta.tsx`, `components/MenuConta.test.tsx`
 - Modify: `app/layout.tsx:21-25` (o header ganha `MenuConta` à direita do `Logotipo`)
 
