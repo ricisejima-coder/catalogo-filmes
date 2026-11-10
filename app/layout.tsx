@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Big_Shoulders, Geist } from "next/font/google";
 import { Logotipo } from "@/components/Logotipo";
+import { MenuConta } from "@/components/MenuConta";
+import { obterUsuario } from "@/lib/supabase/servidor";
+import { sair } from "./entrar/acoes";
 import { Rodape } from "./Rodape";
 import "./globals.css";
 
@@ -13,14 +16,16 @@ export const metadata: Metadata = {
   description: "Filmes disponíveis agora nos streamings por assinatura no Brasil.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const usuario = await obterUsuario();
   return (
     <html lang="pt-BR" className={`${geistSans.variable} ${bigShoulders.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-tela text-texto">
         {/* Fica por cima do destaque, sem fundo próprio. */}
         <header className="absolute inset-x-0 top-0 z-20">
-          <div className="moldura py-5">
+          <div className="moldura flex items-center justify-between py-5">
             <Logotipo />
+            <MenuConta usuario={usuario} acaoSair={sair} />
           </div>
         </header>
         <main className="flex-1 pt-20">{children}</main>
