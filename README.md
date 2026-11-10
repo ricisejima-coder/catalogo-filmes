@@ -6,13 +6,17 @@ Feito com Next.js, TypeScript e Tailwind CSS, usando a API do [TMDB](https://www
 
 ## Como rodar
 
-1. Instale o [Node.js](https://nodejs.org/) (versão 20 ou mais nova).
+1. Instale o [Node.js](https://nodejs.org/) (versão 22 ou mais nova).
 2. Crie uma conta grátis no TMDB. Em **Configurações → API**, copie o **API Read Access Token** (o token longo).
-3. Na pasta do projeto, copie `.env.example` para `.env.local` e cole o token:
+3. Na pasta do projeto, copie `.env.example` para `.env.local` e preencha estas três variáveis:
 
    ```
    TMDB_READ_TOKEN=seu_token_aqui
+   NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sua_chave_publica_aqui
    ```
+
+   As duas do Supabase vêm de uma conta grátis: veja o passo a passo em [Contas e listas (Supabase)](#contas-e-listas-supabase).
 
 4. Instale as dependências e inicie:
 
@@ -66,7 +70,7 @@ O arquivo `.env.local` não vai para o git (ele está no `.gitignore`), então n
 
 1. Suba o repositório para o GitHub.
 2. Em [vercel.com](https://vercel.com), importe o repositório.
-3. Em **Settings → Environment Variables**, crie `TMDB_READ_TOKEN` com o seu token.
+3. Em **Settings → Environment Variables**, crie estas três variáveis: `TMDB_READ_TOKEN` (o seu token do TMDB), `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (as duas do seu projeto no Supabase). Sem elas o site não funciona.
 4. Faça o deploy.
 
 ## Atribuições

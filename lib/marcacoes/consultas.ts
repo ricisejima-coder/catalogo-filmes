@@ -13,6 +13,8 @@ export async function listarMarcacoes(): Promise<Marcacao[]> {
   const { data, error } = await supabase
     .from("marcacoes")
     .select("filme_id, lista, criado_em")
+    // Além da segurança por linha (RLS) do banco, filtra aqui também.
+    .eq("usuario_id", usuario.id)
     .order("criado_em", { ascending: false });
   if (error) throw new Error(`Falha ao listar marcações: ${error.message}`);
 

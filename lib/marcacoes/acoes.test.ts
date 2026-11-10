@@ -55,6 +55,15 @@ it("erro do Supabase devolve 'erro' e não chama refresh", async () => {
   expect(refresh).not.toHaveBeenCalled();
 });
 
+it("exceção ao falar com o Supabase devolve 'erro' e registra no console", async () => {
+  const log = vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.mocked(criarClienteServidor).mockRejectedValue(new Error("rede"));
+  expect(await marcarFilme(550, "ja_vi")).toBe("erro");
+  expect(log).toHaveBeenCalled();
+  expect(refresh).not.toHaveBeenCalled();
+  log.mockRestore();
+});
+
 it.each([
   [-1, "quero_ver"],
   [1.5, "ja_vi"],

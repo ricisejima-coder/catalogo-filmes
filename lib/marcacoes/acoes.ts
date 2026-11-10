@@ -35,7 +35,8 @@ export async function marcarFilme(
             { onConflict: "usuario_id,filme_id" },
           );
     if (error) return "erro";
-  } catch {
+  } catch (erro) {
+    console.error("Falha ao marcar filme:", erro);
     return "erro";
   }
 
