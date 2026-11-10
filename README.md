@@ -23,6 +23,26 @@ Feito com Next.js, TypeScript e Tailwind CSS, usando a API do [TMDB](https://www
 
 5. Abra http://localhost:3000.
 
+## Contas e listas (Supabase)
+
+Quem cria uma conta pode marcar filmes como **Quero ver** e **Já vi**. As listas ficam guardadas no [Supabase](https://supabase.com), um serviço grátis de banco de dados e login. Sem essa configuração, o catálogo funciona normalmente, mas as listas não.
+
+Antes de começar, faça estes 4 passos no Supabase:
+
+1. Crie a conta e o projeto no Supabase, na região South America (São Paulo).
+2. Desligue a opção **Confirm email** nas configurações de login por e-mail.
+3. Rode o arquivo `supabase/schema.sql` no editor de SQL do Supabase. Ele cria as tabelas e as regras de segurança.
+4. Preencha o `.env.local` com a URL e a chave pública do projeto. Você encontra as duas em **Project Settings → API**.
+
+No arquivo `.env.local`, use estas duas variáveis:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sua_chave_publica_aqui
+```
+
+Use só a chave **publicável** (pública). Nunca coloque no projeto a chave `service_role` nem a senha do banco.
+
 ## Comandos
 
 | Comando | O que faz |
