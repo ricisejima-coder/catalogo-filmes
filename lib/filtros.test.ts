@@ -43,3 +43,16 @@ it("ler(escrever(f)) devolve f", () => {
   const f: Filtros = { streamings: [337], genero: 35, ordem: "avaliados", busca: "amor" };
   expect(lerFiltros(Object.fromEntries(new URLSearchParams(escreverFiltros(f))))).toEqual(f);
 });
+
+it("lê a nota mínima e ignora valores fora da lista", () => {
+  expect(lerFiltros({ nota: "8" }).notaMinima).toBe(8);
+  expect(lerFiltros({ nota: "abc" }).notaMinima).toBeUndefined();
+  expect(lerFiltros({ nota: "5" }).notaMinima).toBeUndefined();
+  expect(lerFiltros({ nota: "10" }).notaMinima).toBeUndefined();
+});
+
+it("escreve a nota mínima na URL e ler(escrever) a preserva", () => {
+  const f: Filtros = { streamings: [], ordem: "populares", notaMinima: 7 };
+  expect(escreverFiltros(f)).toBe("nota=7");
+  expect(lerFiltros(Object.fromEntries(new URLSearchParams(escreverFiltros(f))))).toEqual(f);
+});

@@ -96,3 +96,15 @@ it("busca sem resultados no TMDB", async () => {
     filmes: [], pagina: 1, temMais: false,
   });
 });
+
+it("aplica a nota mínima, exigindo também 100 votos", async () => {
+  const boa = { ...F1, vote_average: 8.2, vote_count: 500 };
+  const fraca = { ...F3, vote_average: 7.9, vote_count: 500 };
+  const poucosVotos = { ...F1, id: 1, vote_average: 9.5, vote_count: 3 };
+  simular({ 1: [boa, fraca] }, 1);
+  const r = await buscarFilmes({ streamings: [], ordem: "populares", notaMinima: 8, busca: "x" }, 1);
+  expect(r.filmes.map((f) => f.id)).toEqual([1]);
+  simular({ 1: [poucosVotos] }, 1);
+  const r2 = await buscarFilmes({ streamings: [], ordem: "populares", notaMinima: 8, busca: "x" }, 1);
+  expect(r2.filmes).toEqual([]);
+});

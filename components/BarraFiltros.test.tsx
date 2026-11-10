@@ -80,3 +80,16 @@ it("dois cliques rápidos mantêm os dois streamings", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Prime Video" }));
   expect(push).toHaveBeenLastCalledWith("/?streaming=8%2C119");
 });
+
+it("escolher nota mínima e voltar para qualquer nota", async () => {
+  render(<BarraFiltros streamings={streamings} generos={generos} filtros={FILTROS_PADRAO} />);
+  await userEvent.selectOptions(screen.getByLabelText("Nota mínima"), "8");
+  expect(push).toHaveBeenLastCalledWith("/?nota=8");
+  await userEvent.selectOptions(screen.getByLabelText("Nota mínima"), "");
+  expect(push).toHaveBeenLastCalledWith("/");
+});
+
+it("a nota mínima vinda da URL aparece selecionada", () => {
+  render(<BarraFiltros streamings={streamings} generos={generos} filtros={{ ...FILTROS_PADRAO, notaMinima: 7 }} />);
+  expect(screen.getByLabelText("Nota mínima")).toHaveValue("7");
+});

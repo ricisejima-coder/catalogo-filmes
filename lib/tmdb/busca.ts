@@ -1,4 +1,4 @@
-import type { Filtros } from "@/lib/filtros";
+import { VOTOS_MINIMOS_COM_NOTA, type Filtros } from "@/lib/filtros";
 import { CACHE, PAGINA_MAXIMA, tmdbGet } from "./cliente";
 import { paraFilmeResumo } from "./imagens";
 import type { FilmeResumo, PaginaFilmes, TmdbFilme, TmdbPagina } from "./tipos";
@@ -17,10 +17,18 @@ async function streamingsNoBrasil(filmeId: number): Promise<number[]> {
   return r.results?.BR?.flatrate?.map((p) => p.provider_id) ?? [];
 }
 
+function passaNaNota(f: TmdbFilme, notaMinima: Filtros["notaMinima"]): boolean {
+  if (notaMinima === undefined) return true;
+  return f.vote_average >= notaMinima && (f.vote_count ?? 0) >= VOTOS_MINIMOS_COM_NOTA;
+}
+
 async function filtrarDisponiveis(resultados: TmdbFilme[], filtros: Filtros): Promise<FilmeResumo[]> {
-  const candidatos = filtros.genero === undefined
-    ? resultados
-    : resultados.filter((f) => f.genre_ids?.includes(filtros.genero!));
+  // Gênero e nota primeiro: são de graça e poupam consultas de streaming.
+  const candidatos = resultados.filter(
+    (f) =>
+      (filtros.genero === undefined || f.genre_ids?.includes(filtros.genero)) &&
+      passaNaNota(f, filtros.notaMinima),
+  );
 
   const checagens = await Promise.allSettled(candidatos.map((f) => streamingsNoBrasil(f.id)));
 

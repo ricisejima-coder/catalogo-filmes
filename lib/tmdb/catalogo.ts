@@ -1,4 +1,4 @@
-import type { Filtros, Ordem } from "@/lib/filtros";
+import { VOTOS_MINIMOS_COM_NOTA, type Filtros, type NotaMinima, type Ordem } from "@/lib/filtros";
 import { CACHE, PAGINA_MAXIMA, tmdbGet } from "./cliente";
 import { paraFilmeResumo } from "./imagens";
 import { buscarFilmes } from "./busca";
@@ -20,6 +20,11 @@ function parametrosDeOrdem(ordem: Ordem): Record<string, string | number> {
   }
 }
 
+function parametrosDeNota(nota: NotaMinima | undefined): Record<string, number> {
+  if (nota === undefined) return {};
+  return { "vote_average.gte": nota, "vote_count.gte": VOTOS_MINIMOS_COM_NOTA };
+}
+
 export async function descobrirFilmes(
   filtros: Filtros,
   pagina: number,
@@ -35,6 +40,8 @@ export async function descobrirFilmes(
       include_adult: "false",
       with_watch_providers: ids.join("|"), // "|" = OU: em qualquer um dos streamings
       with_genres: filtros.genero,
+      ...parametrosDeNota(filtros.notaMinima),
+      // Vem depois da nota: se a ordem exigir mais votos (avaliados = 300), ela vence.
       ...parametrosDeOrdem(filtros.ordem),
       page: pagina,
     },

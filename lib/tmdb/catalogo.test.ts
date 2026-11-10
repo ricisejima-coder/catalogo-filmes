@@ -82,3 +82,24 @@ it("listarFilmes com busca usa /search/movie e não /discover/movie", async () =
   expect(caminhos).toContain("/3/search/movie");
   expect(caminhos).not.toContain("/3/discover/movie");
 });
+
+it("nota mínima pede ao TMDB nota a partir dela e ao menos 100 votos", async () => {
+  const f = instalarFetchFalso({ "/discover/movie": pag });
+  await descobrirFilmes({ streamings: [], ordem: "populares", notaMinima: 8 }, 1, [8]);
+  expect(params(f).get("vote_average.gte")).toBe("8");
+  expect(params(f).get("vote_count.gte")).toBe("100");
+});
+
+it("nota mínima com ordem avaliados mantém o mínimo de 300 votos", async () => {
+  const f = instalarFetchFalso({ "/discover/movie": pag });
+  await descobrirFilmes({ streamings: [], ordem: "avaliados", notaMinima: 8 }, 1, [8]);
+  expect(params(f).get("vote_average.gte")).toBe("8");
+  expect(params(f).get("vote_count.gte")).toBe("300");
+});
+
+it("sem nota mínima não filtra por nota", async () => {
+  const f = instalarFetchFalso({ "/discover/movie": pag });
+  await descobrirFilmes({ streamings: [], ordem: "populares" }, 1, [8]);
+  expect(params(f).has("vote_average.gte")).toBe(false);
+  expect(params(f).has("vote_count.gte")).toBe(false);
+});

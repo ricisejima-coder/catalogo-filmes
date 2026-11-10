@@ -6,6 +6,7 @@ import { escreverFiltros, type Filtros } from "@/lib/filtros";
 import type { Genero, Streaming } from "@/lib/tmdb/tipos";
 import { CampoBusca } from "./CampoBusca";
 import { SeletorGenero } from "./SeletorGenero";
+import { SeletorNota } from "./SeletorNota";
 import { SeletorOrdem } from "./SeletorOrdem";
 import { SeletorStreamings } from "./SeletorStreamings";
 
@@ -62,6 +63,7 @@ export function BarraFiltros({ streamings, generos, filtros }: Props) {
           aoBuscar={(busca) => aplicar({ ...atuais, busca })}
         />
         <SeletorGenero generos={generos} valor={atuais.genero} aoMudar={(genero) => aplicar({ ...atuais, genero })} />
+        <SeletorNota valor={atuais.notaMinima} aoMudar={(notaMinima) => aplicar({ ...atuais, notaMinima })} />
         <SeletorOrdem valor={atuais.ordem} desabilitado={Boolean(atuais.busca)} aoMudar={(ordem) => aplicar({ ...atuais, ordem })} />
       </div>
     </section>

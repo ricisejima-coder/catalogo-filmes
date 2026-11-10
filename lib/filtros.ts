@@ -3,11 +3,17 @@
 
 export type Ordem = "populares" | "avaliados" | "recentes";
 
+export const NOTAS_MINIMAS = [6, 7, 8, 9] as const;
+export type NotaMinima = (typeof NOTAS_MINIMAS)[number];
+/** Com nota mínima ligada, exige votos suficientes para a nota valer alguma coisa. */
+export const VOTOS_MINIMOS_COM_NOTA = 100;
+
 export type Filtros = {
   streamings: number[]; // ids de provedores do TMDB; vazio = todos
   genero?: number; // id de gênero do TMDB
   ordem: Ordem;
   busca?: string; // texto já aparado; ausente = sem busca
+  notaMinima?: NotaMinima; // nota do TMDB; ausente = qualquer nota
 };
 
 export type ParametrosUrl = Record<string, string | string[] | undefined>;
@@ -44,6 +50,9 @@ export function lerFiltros(params: ParametrosUrl): Filtros {
   const busca = primeiro(params.busca)?.trim();
   if (busca) filtros.busca = busca;
 
+  const nota = Number(primeiro(params.nota));
+  if (NOTAS_MINIMAS.includes(nota as NotaMinima)) filtros.notaMinima = nota as NotaMinima;
+
   return filtros;
 }
 
@@ -54,5 +63,6 @@ export function escreverFiltros(filtros: Filtros): string {
   if (filtros.ordem !== FILTROS_PADRAO.ordem) params.set("ordem", filtros.ordem);
   const busca = filtros.busca?.trim();
   if (busca) params.set("busca", busca);
+  if (filtros.notaMinima !== undefined) params.set("nota", String(filtros.notaMinima));
   return params.toString();
 }
