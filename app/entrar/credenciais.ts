@@ -2,9 +2,12 @@
 // só pode exportar funções async.
 import { validarVoltar } from "@/lib/caminhoVolta";
 
-export type EstadoEntrada = { erro: string | null };
+/** `email` devolve o que a pessoa digitou, porque o React limpa o formulário depois da ação. */
+export type EstadoEntrada = { erro: string | null; email?: string };
 
 export const SENHA_CURTA = "A senha precisa ter pelo menos 6 caracteres";
+
+export const CONFIRMAR_EMAIL = "Confirme seu e-mail para entrar ou peça para desligar a confirmação no Supabase.";
 
 const MENSAGENS: Record<string, string> = {
   invalid_credentials: "E-mail ou senha incorretos",

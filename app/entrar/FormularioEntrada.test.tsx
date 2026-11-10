@@ -40,3 +40,22 @@ it("mostra o erro devolvido pela ação", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Entrar" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("E-mail ou senha incorretos");
 });
+
+it("depois de um erro, o e-mail digitado continua no campo", async () => {
+  montar({ acaoEntrar: vi.fn().mockResolvedValue({ erro: "E-mail ou senha incorretos", email: "a@x.com" }) });
+  await userEvent.type(screen.getByLabelText("E-mail"), "a@x.com");
+  await userEvent.type(screen.getByLabelText("Senha"), "123456");
+  await userEvent.click(screen.getByRole("button", { name: "Entrar" }));
+  expect(await screen.findByRole("alert")).toBeInTheDocument();
+  expect(screen.getByLabelText("E-mail")).toHaveValue("a@x.com");
+});
+
+it("ao trocar de aba, o erro antigo some", async () => {
+  montar({ acaoEntrar: vi.fn().mockResolvedValue({ erro: "E-mail ou senha incorretos", email: "a@x.com" }) });
+  await userEvent.type(screen.getByLabelText("E-mail"), "a@x.com");
+  await userEvent.type(screen.getByLabelText("Senha"), "123456");
+  await userEvent.click(screen.getByRole("button", { name: "Entrar" }));
+  expect(await screen.findByRole("alert")).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("tab", { name: "Criar conta" }));
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+});

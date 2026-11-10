@@ -46,9 +46,9 @@ it("lerCredenciais apara o e-mail e valida o voltar", () => {
 
 it("senha com menos de 6 caracteres nem chega ao Supabase", async () => {
   const r = await criarConta({ erro: null }, dados("a@x.com", "123"));
-  expect(r).toEqual({ erro: "A senha precisa ter pelo menos 6 caracteres" });
+  expect(r).toEqual({ erro: "A senha precisa ter pelo menos 6 caracteres", email: "a@x.com" });
   const r2 = await entrar({ erro: null }, dados("a@x.com", "123"));
-  expect(r2).toEqual({ erro: "A senha precisa ter pelo menos 6 caracteres" });
+  expect(r2).toEqual({ erro: "A senha precisa ter pelo menos 6 caracteres", email: "a@x.com" });
   expect(auth.signUp).not.toHaveBeenCalled();
   expect(auth.signInWithPassword).not.toHaveBeenCalled();
 });
@@ -62,16 +62,25 @@ it("entrar com sucesso redireciona para voltar", async () => {
 
 it("entrar com erro devolve a mensagem traduzida", async () => {
   auth.signInWithPassword.mockResolvedValue({ error: { code: "invalid_credentials" } });
-  expect(await entrar({ erro: null }, dados("a@x.com", "123456"))).toEqual({ erro: "E-mail ou senha incorretos" });
+  expect(await entrar({ erro: null }, dados("a@x.com", "123456"))).toEqual({ erro: "E-mail ou senha incorretos", email: "a@x.com" });
   expect(redirect).not.toHaveBeenCalled();
 });
 
 it("criarConta com erro traduz e com sucesso redireciona", async () => {
   auth.signUp.mockResolvedValueOnce({ error: { code: "user_already_exists" } });
-  expect(await criarConta({ erro: null }, dados("a@x.com", "123456"))).toEqual({ erro: "Este e-mail já tem conta" });
-  auth.signUp.mockResolvedValueOnce({ error: null });
+  expect(await criarConta({ erro: null }, dados("a@x.com", "123456"))).toEqual({ erro: "Este e-mail já tem conta", email: "a@x.com" });
+  auth.signUp.mockResolvedValueOnce({ data: { session: {} }, error: null });
   await expect(criarConta({ erro: null }, dados("a@x.com", "123456"))).rejects.toThrow("NEXT_REDIRECT");
   expect(redirect).toHaveBeenCalledWith("/filme/550");
+});
+
+it("criarConta sem sessão (confirmação de e-mail ligada) pede para confirmar e não redireciona", async () => {
+  auth.signUp.mockResolvedValue({ data: { session: null, user: {} }, error: null });
+  expect(await criarConta({ erro: null }, dados("a@x.com", "123456"))).toEqual({
+    erro: "Confirme seu e-mail para entrar ou peça para desligar a confirmação no Supabase.",
+    email: "a@x.com",
+  });
+  expect(redirect).not.toHaveBeenCalled();
 });
 
 it("sair encerra a sessão e vai para a home", async () => {
