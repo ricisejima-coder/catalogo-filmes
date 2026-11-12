@@ -4,7 +4,21 @@ import { FILTROS_PADRAO } from "@/lib/filtros";
 import { respostaJson } from "@/tests/fetchFalso";
 import { BotaoCarregarMais } from "./BotaoCarregarMais";
 
-const filmeX = { id: 42, titulo: "Filme X", ano: "2020", nota: 7, posterUrl: null, generoIds: [] };
+vi.mock("@/lib/marcacoes/acoes", () => ({ marcarFilme: vi.fn() }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+const filmeX = {
+  id: 42,
+  titulo: "Filme X",
+  ano: "2020",
+  nota: 7,
+  posterUrl: null,
+  generoIds: [],
+};
 const fetchFalso = vi.fn();
 beforeEach(() => {
   fetchFalso.mockReset();
@@ -49,4 +63,16 @@ it("falha de rede também mostra o erro", async () => {
 it("sem mais páginas não mostra o botão", () => {
   render(<BotaoCarregarMais filtros={FILTROS_PADRAO} ultimaPagina={1} temMais={false} />);
   expect(screen.queryByRole("button")).not.toBeInTheDocument();
+});
+
+it("filmes carregados depois usam as marcações recebidas", async () => {
+  fetchFalso.mockResolvedValue(respostaJson({ filmes: [filmeX], pagina: 2, temMais: false }));
+  render(
+    <BotaoCarregarMais filtros={FILTROS_PADRAO} ultimaPagina={1} temMais marcacoes={{ 42: "quero_ver" }} logado />,
+  );
+  await userEvent.click(screen.getByRole("button", { name: "Carregar mais" }));
+  const botao = await screen.findByRole("button", {
+    name: "Marcar Filme X como quero ver",
+  });
+  expect(botao).toHaveAttribute("aria-pressed", "true");
 });

@@ -1,9 +1,14 @@
+import { AbasCatalogo } from "@/components/AbasCatalogo";
 import { BarraFiltros } from "@/components/BarraFiltros";
 import { BotaoCarregarMais } from "@/components/BotaoCarregarMais";
 import { Destaque } from "@/components/Destaque";
 import { EstadoVazio } from "@/components/EstadoVazio";
 import { GradeFilmes } from "@/components/GradeFilmes";
+import { PainelLista } from "@/components/PainelLista";
+import { lerAba } from "@/lib/abas";
 import { escreverFiltros, lerFiltros } from "@/lib/filtros";
+import { listarMarcacoesComSeguranca, paraMapa } from "@/lib/marcacoes/consultas";
+import { obterUsuarioComSeguranca } from "@/lib/supabase/servidor";
 import { listarFilmes } from "@/lib/tmdb/catalogo";
 import { listarGeneros, listarStreamings } from "@/lib/tmdb/referencias";
 import type { FilmeResumo } from "@/lib/tmdb/tipos";
@@ -13,7 +18,23 @@ function temCena(filme: FilmeResumo): filme is FilmeResumo & { fundoUrl: string 
 }
 
 export default async function Catalogo({ searchParams }: PageProps<"/">) {
-  const filtros = lerFiltros(await searchParams);
+  const params = await searchParams;
+  const aba = lerAba(params);
+  const [usuario, lista] = await Promise.all([obterUsuarioComSeguranca(), listarMarcacoesComSeguranca()]);
+  const indisponivel = usuario === "indisponivel";
+  const logado = usuario !== null && !indisponivel;
+
+  if (aba !== "streaming") {
+    return (
+      <div className="moldura pt-4 pb-16">
+        <AbasCatalogo ativa={aba} />
+        <PainelLista aba={aba} logado={logado} indisponivel={indisponivel} marcacoes={lista} />
+      </div>
+    );
+  }
+
+  const marcacoes = paraMapa(lista ?? []);
+  const filtros = lerFiltros(params);
   const [streamings, generos, pagina] = await Promise.all([
     listarStreamings(),
     listarGeneros(),
@@ -27,6 +48,7 @@ export default async function Catalogo({ searchParams }: PageProps<"/">) {
     <>
       {destaque && <Destaque filme={destaque} ordem={filtros.ordem} />}
       <div className={`moldura ${destaque ? "pt-6" : "pt-4"} pb-16`}>
+        <AbasCatalogo ativa={aba} />
         <h1 className="font-letreiro text-4xl font-extrabold tracking-wide sm:text-5xl">
           {filtros.busca ? `Resultados para “${filtros.busca}”` : "Em streaming agora"}
         </h1>
@@ -36,12 +58,14 @@ export default async function Catalogo({ searchParams }: PageProps<"/">) {
           <EstadoVazio />
         ) : (
           <>
-            <GradeFilmes filmes={pagina.filmes} />
+            <GradeFilmes filmes={pagina.filmes} marcacoes={marcacoes} logado={logado} />
             <BotaoCarregarMais
               key={escreverFiltros(filtros)}
               filtros={filtros}
               ultimaPagina={pagina.pagina}
               temMais={pagina.temMais}
+              marcacoes={marcacoes}
+              logado={logado}
             />
           </>
         )}

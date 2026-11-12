@@ -2,12 +2,25 @@
 
 import { useState } from "react";
 import { escreverFiltros, type Filtros } from "@/lib/filtros";
+import type { MapaMarcacoes } from "@/lib/marcacoes/tipos";
 import type { FilmeResumo, PaginaFilmes } from "@/lib/tmdb/tipos";
 import { GradeFilmes } from "./GradeFilmes";
 
-type Props = { filtros: Filtros; ultimaPagina: number; temMais: boolean };
+type Props = {
+  filtros: Filtros;
+  ultimaPagina: number;
+  temMais: boolean;
+  marcacoes?: MapaMarcacoes;
+  logado?: boolean;
+};
 
-export function BotaoCarregarMais({ filtros, ultimaPagina: paginaInicial, temMais: temMaisInicial }: Props) {
+export function BotaoCarregarMais({
+  filtros,
+  ultimaPagina: paginaInicial,
+  temMais: temMaisInicial,
+  marcacoes,
+  logado,
+}: Props) {
   const [filmes, setFilmes] = useState<FilmeResumo[]>([]);
   const [ultimaPagina, setUltimaPagina] = useState(paginaInicial);
   const [temMais, setTemMais] = useState(temMaisInicial);
@@ -40,7 +53,7 @@ export function BotaoCarregarMais({ filtros, ultimaPagina: paginaInicial, temMai
     <>
       {filmes.length > 0 && (
         <div className="mt-6">
-          <GradeFilmes filmes={filmes} />
+          <GradeFilmes filmes={filmes} marcacoes={marcacoes} logado={logado} />
         </div>
       )}
       {(temMais || erro) && (
