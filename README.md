@@ -77,4 +77,3 @@ O arquivo `.env.local` não vai para o git (ele está no `.gitignore`), então n
 
 Este produto usa a API do TMDB, mas não é endossado nem certificado pelo TMDB. Dados de streaming fornecidos por JustWatch.
 
-> **Antes de publicar:** troque `public/tmdb-logo.svg` pelo logo oficial, que fica em https://www.themoviedb.org/about/logos-attribution.
