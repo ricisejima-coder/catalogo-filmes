@@ -13,10 +13,11 @@ export async function marcarFilme(
   if (!Number.isInteger(filmeId) || filmeId <= 0) return "erro";
   if (lista !== null && !LISTAS.includes(lista)) return "erro";
 
-  const usuario = await obterUsuario();
-  if (!usuario) return "sem-login";
-
   try {
+    // Dentro do try: com o Supabase fora do ar, ler o usuário também lança.
+    const usuario = await obterUsuario();
+    if (!usuario) return "sem-login";
+
     const supabase = await criarClienteServidor();
     const { error } =
       lista === null

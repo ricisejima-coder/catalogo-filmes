@@ -64,6 +64,15 @@ it("exceção ao falar com o Supabase devolve 'erro' e registra no console", asy
   log.mockRestore();
 });
 
+it("Supabase fora do ar ao ler o usuário devolve 'erro' em vez de lançar", async () => {
+  const log = vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.mocked(obterUsuario).mockRejectedValue(new Error("rede"));
+  expect(await marcarFilme(550, "quero_ver")).toBe("erro");
+  expect(log).toHaveBeenCalled();
+  expect(refresh).not.toHaveBeenCalled();
+  log.mockRestore();
+});
+
 it.each([
   [-1, "quero_ver"],
   [1.5, "ja_vi"],
